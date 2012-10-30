@@ -16,14 +16,20 @@ module AWSRaw
         @secret_access_key = secret_access_key
       end
 
-      def signature(request)
+      def authorization_header_value(request)
         string_to_sign = string_to_sign(request)
+        signature = encoded_signature(string_to_sign)
 
+        "AWS #{@access_key_id}:#{signature}"
+      end
+
+      # Backwards compatibility
+      alias_method :signature, :authorization_header_value
+
+      def encoded_signature(string_to_sign)
         digest    = OpenSSL::Digest::Digest.new("sha1")
         sha       = OpenSSL::HMAC.digest(digest, @secret_access_key, string_to_sign)
         signature = Base64.encode64(sha).strip
-
-        "AWS #{@access_key_id}:#{signature}"
       end
 
       def string_to_sign(request)
