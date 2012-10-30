@@ -4,9 +4,15 @@ require 'cgi'
 module AWSRaw
   module S3
 
-    # Generates the signed query string for an authenticated GET request to S3
+    # Generates a signed query string to make an authenticated S3 GET request
     #
     # See http://docs.amazonwebservices.com/AmazonS3/latest/dev/RESTAuthentication.html#RESTAuthenticationQueryStringAuth
+    #
+    # The Authorization header method is usually preferable, as implemented in
+    # AWSRaw::S3::Signer. However, you may have occasions where you need a
+    # simple "download URL", without having to tell your user-agent (browser,
+    # curl, wget, etc) about all the special AWS headers. The query string
+    # authentication method is useful in those cases.
     class QueryStringSigner < Signer
       def query_string(bucket, object, expires, headers = {})
         query_string_hash(bucket, object, expires, headers).map { |k,v|
