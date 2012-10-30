@@ -1,8 +1,8 @@
 require 'awsraw/s3/signer'
 
 describe AWSRaw::S3::Signer do
-  let(:access_key_id)     { "0PN5J17HBGZHT7JJ3X82" }
-  let(:secret_access_key) { "uV3F3YluFJax1cknvbcGwgjvx4QpvB+leU8dUj2o" }
+  let(:access_key_id)     { "AKIAIOSFODNN7EXAMPLE" }
+  let(:secret_access_key) { "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY" }
 
   subject { AWSRaw::S3::Signer.new(access_key_id, secret_access_key) }
 
@@ -17,7 +17,7 @@ describe AWSRaw::S3::Signer do
       subject.string_to_sign(request).should ==
         "GET\n\n\nTue, 27 Mar 2007 19:36:42 +0000\n/johnsmith/photos/puppy.jpg"
 
-      subject.signature(request).should == "AWS #{access_key_id}:xXjDGYUmKxnwqr5KXNPGldn5LbA="
+      subject.signature(request).should == "AWS #{access_key_id}:bWq2s1WEIj+Ydj0vQ697zp+IXMU="
     end
 
     it "signs an upload correctly" do
@@ -42,7 +42,7 @@ describe AWSRaw::S3::Signer do
       subject.string_to_sign(request).should ==
         "PUT\n4gJE4saaMU4BqNR0kLY+lw==\napplication/x-download\nTue, 27 Mar 2007 21:06:08 +0000\nx-amz-acl:public-read\nx-amz-meta-checksumalgorithm:crc32\nx-amz-meta-filechecksum:0x02661779\nx-amz-meta-reviewedby:joe@johnsmith.net,jane@johnsmith.net\n/static.johnsmith.net/db-backup.dat.gz"
 
-      subject.signature(request).should == "AWS #{access_key_id}:C0FlOtU8Ylb9KDTpZqYkZPX91iI="
+      subject.signature(request).should == "AWS #{access_key_id}:ilyl83RwaSoYIEdixDQcA4OnAnc="
     end
 
   end
