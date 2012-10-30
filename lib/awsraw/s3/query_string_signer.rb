@@ -14,14 +14,14 @@ module AWSRaw
     # curl, wget, etc) about all the special AWS headers. The query string
     # authentication method is useful in those cases.
     class QueryStringSigner < Signer
-      def query_string(bucket, object, expires, headers = {})
-        query_string_hash(bucket, object, expires, headers).map { |k,v|
+      def query_string(url, expires)
+        query_string_hash(url, expires).map { |k,v|
           "#{k}=#{v}"
         }.join("&")
       end
 
-      def query_string_hash(bucket, object, expires, headers = {})
-        string_to_sign = string_to_sign(bucket, object, expires, headers)
+      def query_string_hash(url, expires)
+        string_to_sign = string_to_sign(url, expires)
         signature = encoded_signature(string_to_sign)
 
         {
@@ -31,22 +31,18 @@ module AWSRaw
         }
       end
 
-      def string_to_sign(bucket, object, expires, headers = {})
+      def string_to_sign(url, expires)
         [
           "GET",
-          headers["Content-MD5"]  || "",
-          headers["Content-Type"] || "",
+          # Assume user-agent won't send Content-MD5 header
+          "",
+          # Assume user-agent won't send Content-Type header
+          "",
           expires.to_s,
-          canonicalized_amz_headers(headers),
-          canonicalized_resource(bucket, object)
+          # Assume user-agent won't send any amz headers
+          canonicalized_amz_headers({}),
+          canonicalized_resource(URI.parse(url))
         ].flatten.join("\n")
-      end
-
-    private
-
-      # Assumes that bucket and object are already URI-encoded!
-      def canonicalized_resource(bucket, object)
-        "/#{bucket}/#{object}"
       end
 
     end

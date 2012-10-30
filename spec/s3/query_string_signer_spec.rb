@@ -8,15 +8,13 @@ describe AWSRaw::S3::QueryStringSigner do
 
   context "examples from Amazon docs" do
     it "signs a get request correctly" do
-      bucket = "johnsmith"
-      object = "photos/puppy.jpg"
+      url = "http://s3.amazonaws.com/johnsmith/photos/puppy.jpg"
       expiry = 1175139620
 
-      p subject.string_to_sign(bucket, object, expiry)
-      subject.string_to_sign(bucket, object, expiry).should ==
+      subject.string_to_sign(url, expiry).should ==
         "GET\n\n\n#{expiry}\n/johnsmith/photos/puppy.jpg"
 
-      subject.query_string_hash(bucket, object, expiry).should == {
+      subject.query_string_hash(url, expiry).should == {
         "AWSAccessKeyId" => access_key_id,
         "Expires"        => expiry.to_s,
         "Signature"      => "NpgCjnDzrM%2BWFzoENXmpNDUsSn8%3D"
