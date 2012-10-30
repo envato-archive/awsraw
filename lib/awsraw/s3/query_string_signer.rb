@@ -14,10 +14,12 @@ module AWSRaw
     # curl, wget, etc) about all the special AWS headers. The query string
     # authentication method is useful in those cases.
     class QueryStringSigner < Signer
-      def query_string(url, expires)
-        query_string_hash(url, expires).map { |k,v|
-          "#{k}=#{v}"
-        }.join("&")
+      def sign_with_query_string(url, expires)
+        query_string_hash = query_string_hash(url, expires)
+
+        uri = URI.parse(url)
+        uri.query = query_string_hash.map { |k,v| "#{k}=#{v}" }.join("&")
+        uri.to_s
       end
 
       def query_string_hash(url, expires)

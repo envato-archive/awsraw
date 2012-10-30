@@ -19,6 +19,9 @@ describe AWSRaw::S3::QueryStringSigner do
         "Expires"        => expiry.to_s,
         "Signature"      => "NpgCjnDzrM%2BWFzoENXmpNDUsSn8%3D"
       }
+
+      subject.sign_with_query_string(url, expiry).to_s.should ==
+        "http://s3.amazonaws.com/johnsmith/photos/puppy.jpg?AWSAccessKeyId=#{access_key_id}&Expires=#{expiry}&Signature=NpgCjnDzrM%2BWFzoENXmpNDUsSn8%3D"
     end
 
   end
