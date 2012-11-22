@@ -34,13 +34,16 @@ s3 = AWSRaw::S3::Client.new(
 s3.request(:method  => "PUT",
            :bucket  => "mah-sekret-buckit",
            :key     => "reaction.gif",
-           :content => File.read("reaction.gif"))
+           :content => File.read("reaction.gif"),
+           :headers => { "Content-Type" => "image/gif" })
 ```
 
 Signed query-string requests, to allow authorized clients to get protected
 resources:
 
 ```ruby
+require 'awsraw/s3/query_string_signer'
+
 signer = AWSRaw::S3::QueryStringSigner.new(
            ENV['AWS_ACCESS_KEY_ID'],
            ENV['AWS_SECRET_ACCESS_KEY'])
