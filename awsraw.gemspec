@@ -7,6 +7,7 @@ Gem::Specification.new do |s|
   s.version     = Awsraw::VERSION
   s.authors     = ["Pete Yandell", "David Goodlad"]
   s.email       = ["pete@notahat.com", "david@goodlad.net"]
+  s.license     = 'MIT'
   s.homepage    = "http://github.com/envato/awsraw"
   s.summary     = %q{Minimal AWS client}
   s.description = %q{A client for Amazon Web Services in the style of FlickRaw}
