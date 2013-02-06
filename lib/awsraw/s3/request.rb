@@ -5,6 +5,8 @@ require 'uri'
 module AWSRaw
   module S3
 
+    US_STANDARD = "us-east-1"
+
     # Note that we use path style (rather than virtual hosted style) requests.
     # This is because virtual hosted requests only support lower case bucket
     # names.
@@ -14,6 +16,7 @@ module AWSRaw
       def initialize(params, signer)
         @method  = params[:method]
         @bucket  = params[:bucket]
+        @region  = params[:region]
         @key     = params[:key]
         @query   = params[:query]
         @headers = params[:headers] || {}
@@ -34,12 +37,17 @@ module AWSRaw
       attr_reader :content
 
       def host
-        "s3.amazonaws.com"
+        if @region && @region != US_STANDARD
+          "s3-#{@region}.amazonaws.com"
+        else
+          "s3.amazonaws.com"
+        end
       end
 
       def path
-        @path ||= URI.escape("/#{bucket}#{key}")
+        @path ||= URI.escape("/" + [bucket, key].compact.join("/"))
       end
+
 
       def uri
         @uri ||= URI::HTTP.build(
