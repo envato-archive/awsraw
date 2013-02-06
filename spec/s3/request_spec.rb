@@ -22,7 +22,13 @@ describe AWSRaw::S3::Request do
       s3_request.host.should == "s3.amazonaws.com"
     end
 
-    it "uses the region specific host when a region is supplied" do
+    it "ignores the region if it is the standard region" do
+      params[:region] = 'us-east-1'
+
+      s3_request.host.should == "s3.amazonaws.com"
+    end
+
+    it "uses the region specific host when a non standard region is supplied" do
       params[:region] = 'ap-southeast-2'
 
       s3_request.host.should == "s3-ap-southeast-2.amazonaws.com"
