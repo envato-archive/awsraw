@@ -2,6 +2,7 @@ require 'net/http'
 require 'awsraw/s3/request'
 require 'awsraw/s3/response'
 require 'awsraw/s3/signer'
+require 'awsraw/s3/md5_digester'
 
 module AWSRaw
   module S3
@@ -43,7 +44,12 @@ module AWSRaw
           request.headers.each do |name, value|
             http_request[name] = value
           end
-          http_request.body = request.content
+          if request.content.is_a?(File)
+            http_request.body_stream = request.content
+            http_request['Content-Length'] = request.content.size.to_s
+          else
+            http_request.body = request.content
+          end
         end
       end
 
