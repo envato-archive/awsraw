@@ -7,6 +7,8 @@ require 'awsraw/s3/md5_digester'
 module AWSRaw
   module S3
 
+    class ConnectionError < StandardError; end
+
     # A client for the AWS S3 rest API.
     #
     # http://docs.amazonwebservices.com/AmazonS3/latest/API/APIRest.html
@@ -31,7 +33,7 @@ module AWSRaw
 
       def request!(params = {})
         response = request(params)
-        raise "Uh oh! Failure from S3." if response.failure?
+        raise ConnectionError, response.inspect if response.failure?
       end
 
     private

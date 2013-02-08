@@ -1,3 +1,4 @@
+
 require 'awsraw/s3/client'
 
 describe AWSRaw::S3::Client do
@@ -11,7 +12,7 @@ describe AWSRaw::S3::Client do
 
       expect {
         subject.request!(:method => "PUT")
-      }.should_not raise_error
+      }.to_not raise_error
     end
 
     it "raises an error if the response indicates failure" do
@@ -20,7 +21,7 @@ describe AWSRaw::S3::Client do
 
       expect {
         subject.request!(:method => "PUT")
-      }.should raise_error("Uh oh! Failure from S3.")
+      }.to raise_error(::AWSRaw::S3::ConnectionError)
     end
   end
 
