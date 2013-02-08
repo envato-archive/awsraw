@@ -1,9 +1,9 @@
 require 'net/http'
 require 'awsraw/s3/request'
+require 'awsraw/s3/http_request_builder'
 require 'awsraw/s3/response'
 require 'awsraw/s3/signer'
 require 'awsraw/s3/md5_digester'
-
 module AWSRaw
   module S3
 
@@ -22,7 +22,7 @@ module AWSRaw
       def request(params = {})
         request = Request.new(params, signer)
 
-        http_request = construct_http_request(request)
+        http_request = HTTPRequestBuilder.new(request).build
 
         http_response = Net::HTTP.start(request.uri.host, request.uri.port) do |http|
           http.request(http_request)
@@ -37,36 +37,6 @@ module AWSRaw
       end
 
     private
-
-      def construct_http_request(request)
-        klass = http_request_class(request)
-        path  = request.uri.request_uri
-
-        klass.new(path).tap do |http_request|
-          request.headers.each do |name, value|
-            http_request[name] = value
-          end
-          if request.content.is_a?(File)
-            http_request.body_stream = request.content
-            http_request['Content-Length'] = request.content.size.to_s
-          else
-            http_request.body = request.content
-          end
-        end
-      end
-
-      def http_request_class(request)
-        case request.method
-          when "GET"
-            Net::HTTP::Get
-          when "HEAD"
-            Net::HTTP::Head
-          when "PUT"
-            Net::HTTP::Put
-          else
-            raise "Invalid HTTP method!"
-        end
-      end
 
       def construct_response(http_response)
         Response.new(
