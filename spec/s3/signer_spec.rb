@@ -10,6 +10,7 @@ describe AWSRaw::S3::Signer do
     it "signs a get request correctly" do
       request = stub(
         :method  => "GET",
+        :host    => "s3.amazonaws.com",
         :path    => "/johnsmith/photos/puppy.jpg",
         :headers => { "Date" => "Tue, 27 Mar 2007 19:36:42 +0000" }
       )
@@ -23,6 +24,7 @@ describe AWSRaw::S3::Signer do
     it "signs an upload correctly" do
       request = stub(
         :method => "PUT",
+        :host    => "s3.amazonaws.com",
         :path   => "/static.johnsmith.net/db-backup.dat.gz",
         :headers => {
           "User-Agent"                   => "curl/7.15.5",

@@ -57,7 +57,12 @@ module AWSRaw
 
       def canonicalized_resource(request)
         # TODO: Should also append the sub-resource.
-        request.path
+        if request.host =~ /^(.+)\.s3\.amazonaws\.com/
+          bucket = request.host.split(/\./).first
+          '/' + bucket + request.path
+        else
+          request.path
+        end
       end
 
     end
