@@ -10,6 +10,7 @@ module AWSRaw
     #
     # See http://docs.amazonwebservices.com/AmazonS3/latest/dev/RESTAuthentication.html
     class Signer
+      SUBRESOURCES = %w(acl lifecycle location logging notification partNumber policy requestPayment torrent uploadId uploads versionId versioning versions website)
 
       def initialize(access_key_id, secret_access_key)
         @access_key_id     = access_key_id
@@ -56,12 +57,26 @@ module AWSRaw
       end
 
       def canonicalized_resource(request)
-        # TODO: Should also append the sub-resource.
         if request.host =~ /^(.+)\.s3\.amazonaws\.com/
           bucket = request.host.split(/\./).first
-          '/' + bucket + request.path
+          resource = '/' + bucket + request.path
         else
-          request.path
+          resource = request.path
+        end
+        resource + canonicalized_subresource(request)
+      end
+
+      def canonicalized_subresource(request)
+        return "" unless request.query
+        subresources =
+          request.query.split('&')
+            .map { |s| s.split('=') }
+            .select { |k,v| SUBRESOURCES.include? k }
+            .map { |k,v| k + (v ? "=#{v}" : "") }
+        if subresources.any?
+          "?" + subresources.join("&")
+        else
+          ""
         end
       end
 
