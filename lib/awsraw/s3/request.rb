@@ -45,9 +45,8 @@ module AWSRaw
       end
 
       def path
-        @path ||= URI.escape("/" + [bucket, key].compact.join("/"))
+        @path ||= URI.escape("/#{bucket}#{key}")
       end
-
 
       def uri
         @uri ||= URI::HTTP.build(
