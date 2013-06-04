@@ -58,7 +58,7 @@ module AWSRaw
       end
 
       def content_md5
-        @content_md5 ||= Base64.encode64(Digest::MD5.digest(content)).strip
+        @content_md5 ||= Base64.encode64(MD5Digester.new(content).digest).strip
       end
     end
 

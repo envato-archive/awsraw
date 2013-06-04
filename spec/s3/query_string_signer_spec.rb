@@ -24,6 +24,22 @@ describe AWSRaw::S3::QueryStringSigner do
         "http://s3.amazonaws.com/johnsmith/photos/puppy.jpg?AWSAccessKeyId=#{access_key_id}&Expires=#{expiry}&Signature=NpgCjnDzrM%2BWFzoENXmpNDUsSn8%3D"
     end
 
+    it "signs a get request to a non-us-east bucket" do
+      url = "http://johnsmith.s3.amazonaws.com/photos/puppy.jpg"
+      expiry = 1175139620
+
+      subject.string_to_sign(url, expiry).should ==
+        "GET\n\n\n#{expiry}\n/johnsmith/photos/puppy.jpg"
+
+      subject.query_string_hash(url, expiry).should == {
+        "AWSAccessKeyId" => access_key_id,
+        "Expires"        => expiry.to_s,
+        "Signature"      => "NpgCjnDzrM%2BWFzoENXmpNDUsSn8%3D"
+      }
+
+      subject.sign_with_query_string(url, expiry).to_s.should ==
+        "http://johnsmith.s3.amazonaws.com/photos/puppy.jpg?AWSAccessKeyId=#{access_key_id}&Expires=#{expiry}&Signature=NpgCjnDzrM%2BWFzoENXmpNDUsSn8%3D"
+    end
   end
 end
 
