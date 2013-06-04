@@ -35,7 +35,7 @@ file = File.open("reaction.gif", "rb")
 
 s3.request(:method  => "PUT",
            :bucket  => "mah-sekret-buckit",
-           :key     => "reaction.gif",
+           :key     => "/reaction.gif",
            :content => file,
            :headers => { "Content-Type" => "image/gif" })
 
