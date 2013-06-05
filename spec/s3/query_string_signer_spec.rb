@@ -41,5 +41,25 @@ describe AWSRaw::S3::QueryStringSigner do
         "http://johnsmith.s3.amazonaws.com/photos/puppy.jpg?AWSAccessKeyId=#{access_key_id}&Expires=#{expiry}&Signature=NpgCjnDzrM%2BWFzoENXmpNDUsSn8%3D"
     end
   end
+
+  context "custom headers" do
+    let(:url) { "http://s3.amazonaws.com/johnsmith/" }
+    let(:expiry) { 1175139620 }
+
+    it "changes the signature based on the Content-MD5 header" do
+      subject.string_to_sign(url, expiry, "Content-MD5" => "deadbeef").should ==
+        "GET\ndeadbeef\n\n#{expiry}\n/johnsmith/"
+    end
+
+    it "changes the signature based on the Content-Type header" do
+      subject.string_to_sign(url, expiry, "Content-Type" => "image/png").should ==
+        "GET\n\nimage/png\n#{expiry}\n/johnsmith/"
+    end
+
+    it "changes the signature based on x-amz-* headers" do
+      subject.string_to_sign(url, expiry, "x-amz-acl" => "public-read").should ==
+        "GET\n\n\n#{expiry}\nx-amz-acl:public-read\n/johnsmith/"
+    end
+  end
 end
 

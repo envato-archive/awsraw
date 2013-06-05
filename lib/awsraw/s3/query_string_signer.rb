@@ -33,16 +33,13 @@ module AWSRaw
         }
       end
 
-      def string_to_sign(url, expires)
+      def string_to_sign(url, expires, headers = {})
         [
           "GET",
-          # Assume user-agent won't send Content-MD5 header
-          "",
-          # Assume user-agent won't send Content-Type header
-          "",
+          headers["Content-MD5"],
+          headers["Content-Type"],
           expires.to_s,
-          # Assume user-agent won't send any amz headers
-          canonicalized_amz_headers({}),
+          canonicalized_amz_headers(headers),
           canonicalized_resource(URI.parse(url))
         ].flatten.join("\n")
       end
