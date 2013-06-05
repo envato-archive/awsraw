@@ -14,16 +14,16 @@ module AWSRaw
     # curl, wget, etc) about all the special AWS headers. The query string
     # authentication method is useful in those cases.
     class QueryStringSigner < Signer
-      def sign_with_query_string(url, expires)
-        query_string_hash = query_string_hash(url, expires)
+      def sign_with_query_string(url, expires, headers = {})
+        query_string_hash = query_string_hash(url, expires, headers)
 
         uri = URI.parse(url)
         uri.query = query_string_hash.map { |k,v| "#{k}=#{v}" }.join("&")
         uri.to_s
       end
 
-      def query_string_hash(url, expires)
-        string_to_sign = string_to_sign(url, expires)
+      def query_string_hash(url, expires, headers = {})
+        string_to_sign = string_to_sign(url, expires, headers)
         signature = encoded_signature(string_to_sign)
 
         {
@@ -33,16 +33,13 @@ module AWSRaw
         }
       end
 
-      def string_to_sign(url, expires)
+      def string_to_sign(url, expires, headers)
         [
           "GET",
-          # Assume user-agent won't send Content-MD5 header
-          "",
-          # Assume user-agent won't send Content-Type header
-          "",
+          headers["Content-MD5"],
+          headers["Content-Type"],
           expires.to_s,
-          # Assume user-agent won't send any amz headers
-          canonicalized_amz_headers({}),
+          canonicalized_amz_headers(headers),
           canonicalized_resource(URI.parse(url))
         ].flatten.join("\n")
       end
