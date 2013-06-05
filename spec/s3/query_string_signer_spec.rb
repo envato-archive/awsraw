@@ -10,8 +10,9 @@ describe AWSRaw::S3::QueryStringSigner do
     it "signs a get request correctly" do
       url = "http://s3.amazonaws.com/johnsmith/photos/puppy.jpg"
       expiry = 1175139620
+      headers = {}
 
-      subject.string_to_sign(url, expiry).should ==
+      subject.string_to_sign(url, expiry, {}).should ==
         "GET\n\n\n#{expiry}\n/johnsmith/photos/puppy.jpg"
 
       subject.query_string_hash(url, expiry).should == {
@@ -27,8 +28,9 @@ describe AWSRaw::S3::QueryStringSigner do
     it "signs a get request to a non-us-east bucket" do
       url = "http://johnsmith.s3.amazonaws.com/photos/puppy.jpg"
       expiry = 1175139620
+      headers = {}
 
-      subject.string_to_sign(url, expiry).should ==
+      subject.string_to_sign(url, expiry, headers).should ==
         "GET\n\n\n#{expiry}\n/johnsmith/photos/puppy.jpg"
 
       subject.query_string_hash(url, expiry).should == {
