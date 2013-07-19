@@ -30,6 +30,8 @@ module AWSRaw
             Net::HTTP::Head
           when "PUT"
             Net::HTTP::Put
+          when "POST"
+            Net::HTTP::Post
           else
             raise "Invalid HTTP method!"
         end
