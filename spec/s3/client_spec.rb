@@ -6,7 +6,7 @@ describe AWSRaw::S3::Client do
 
   describe "#request!" do
     it "returns if the response indicates success" do
-      response = stub(:failure? => false)
+      response = double(:failure? => false)
       subject.stub(:request => response)
 
       expect {
@@ -15,7 +15,7 @@ describe AWSRaw::S3::Client do
     end
 
     it "raises an error if the response indicates failure" do
-      response = stub(:failure? => true)
+      response = double(:failure? => true)
       subject.stub(:request => response)
 
       expect {

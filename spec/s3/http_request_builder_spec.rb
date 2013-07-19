@@ -7,7 +7,7 @@ describe AWSRaw::S3::HTTPRequestBuilder do
 
   let(:content) { "hello world" }
   let(:s3_request) do
-    stub(
+    double(
       :uri => URI.parse("http://foo.com/foo"),
       :headers => {"Content-Type" => "application/not-real"},
       :content => content,

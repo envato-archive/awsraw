@@ -1,7 +1,7 @@
 require 'awsraw/s3/client'
 
 describe AWSRaw::S3::Request do
-  let(:signer) { stub(:signature => "signature") }
+  let(:signer) { double(:signature => "signature") }
 
   describe "#host" do
     it "defaults to the standard host" do

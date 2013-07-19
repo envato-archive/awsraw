@@ -9,7 +9,7 @@ describe AWSRaw::S3::Signer do
   context "examples from Amazon docs" do
     context "Example Object GET" do
       it "signs a get request correctly" do
-        request = stub(
+        request = double(
           :method  => "GET",
           :host    => "s3.amazonaws.com",
           :path    => "/johnsmith/photos/puppy.jpg",
@@ -24,7 +24,7 @@ describe AWSRaw::S3::Signer do
       end
 
       it "signs an upload correctly" do
-        request = stub(
+        request = double(
           :method  => "PUT",
           :host    => "s3.amazonaws.com",
           :path    => "/static.johnsmith.net/db-backup.dat.gz",
@@ -52,13 +52,15 @@ describe AWSRaw::S3::Signer do
     end
 
     context "Example Fetch" do
-      let(:request) { stub(
-        :method  => "GET",
-        :host    => "johnsmith.s3.amazonaws.com",
-        :path    => "/",
-        :query   => "acl",
-        :headers => { "Date" => "Tue, 27 Mar 2007 19:44:46 +0000" }
-      )}
+      let(:request) do
+        double(
+          :method  => "GET",
+          :host    => "johnsmith.s3.amazonaws.com",
+          :path    => "/",
+          :query   => "acl",
+          :headers => { "Date" => "Tue, 27 Mar 2007 19:44:46 +0000" }
+        )
+      end
 
       it "generates the correct string to sign" do
         subject.string_to_sign(request).should ==
