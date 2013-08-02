@@ -6,6 +6,10 @@ require 'base64'
 module AWSRaw
   module S3
 
+
+    # {:method=>:get, :body=>nil, :url=>#<URI::HTTP:0x007f7fca125588 URL:http://notahat.com/?cors>, :request_headers=>{"User-Agent"=>"Faraday v0.8.8"}, :parallel_manager=>nil, :request=>{:proxy=>nil}, :ssl=>{}}
+   
+
     # Generates the Authorization header for a REST request to S3.
     #
     # See http://docs.amazonwebservices.com/AmazonS3/latest/dev/RESTAuthentication.html
