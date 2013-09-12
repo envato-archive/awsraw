@@ -19,7 +19,7 @@ module AWSRaw
         #   :key            The key if there is one
         #   :subresource    The subresource if there is one
         #
-        # Headers in the :amz_headers hash the don't start with "X-Amz-" will be ignored.
+        # Headers in the :amz_headers hash that don't start with "X-Amz-" will be ignored.
         #
         # For query string signing, pass in the "Expires" timestamp in the :date parameter.
         def self.string_to_sign(request_info = {})
