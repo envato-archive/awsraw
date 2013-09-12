@@ -18,6 +18,22 @@ directly is very nice, instead of having to dig deep into a higher-level
 library to figure out how they've mapped that new feature into their
 terminology and API.
 
+## Configuration
+
+If you need to override the AWS hostname for development/testing purposes, you can do so as follows:
+
+```ruby
+require 'awsraw/s3/client'
+
+# Assuming we have a fake S3 service listening on `fake.s3.dev`
+AWSRaw::S3.configure do |config|
+  config.host = 'fake.s3.dev'
+  config_regional_hosts = {
+    'ap-southeast-2' => 'fake.s3.dev'
+  }
+end
+```
+
 ## Usage
 
 ### S3
