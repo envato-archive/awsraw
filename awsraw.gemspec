@@ -5,8 +5,8 @@ require "awsraw/version"
 Gem::Specification.new do |s|
   s.name        = "awsraw"
   s.version     = Awsraw::VERSION
-  s.authors     = ["Pete Yandell", "David Goodlad", "Jack 'chendo' Chen"]
-  s.email       = ["pete@notahat.com", "david@goodlad.net", "gems.awsraw@chen.do"]
+  s.authors     = ["Pete Yandell", "David Goodlad", "Jack 'chendo' Chen", "Warren Seen"]
+  s.email       = ["pete@notahat.com", "david@goodlad.net", "gems.awsraw@chen.do", "warren@warrenseen.com"]
   s.license     = 'MIT'
   s.homepage    = "http://github.com/envato/awsraw"
   s.summary     = %q{Minimal AWS client}
