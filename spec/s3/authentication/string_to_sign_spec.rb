@@ -16,8 +16,7 @@ describe AWSRaw::S3::Authentication::StringToSign do
       test_example "Object GET",
         {
           :method  => "GET",
-          :bucket  => "johnsmith",
-          :key     => "photos/puppy.jpg",
+          :uri     => "http://johnsmith.s3.amazonaws.com/photos/puppy.jpg",
           :date    => "Tue, 27 Mar 2007 19:36:42 +0000"
         },
         "GET\n\n\nTue, 27 Mar 2007 19:36:42 +0000\n/johnsmith/photos/puppy.jpg"
@@ -25,8 +24,7 @@ describe AWSRaw::S3::Authentication::StringToSign do
       test_example "Object PUT",
         {
           :method       => "PUT",
-          :bucket       => "johnsmith",
-          :key          => "photos/puppy.jpg",
+          :uri          => "http://johnsmith.s3.amazonaws.com/photos/puppy.jpg",
           :content_type => "image/jpeg",
           :date         => "Tue, 27 Mar 2007 21:15:45 +0000"
         },
@@ -35,6 +33,7 @@ describe AWSRaw::S3::Authentication::StringToSign do
       test_example "List",
         {
           :method => "GET",
+          :uri    => "http://johnsmith.s3.amazonaws.com/?prefix=photos&max-keys=50&marker=puppy",
           :bucket => "johnsmith",
           :date   => "Tue, 27 Mar 2007 19:42:41 +0000"
         },
@@ -43,8 +42,7 @@ describe AWSRaw::S3::Authentication::StringToSign do
       test_example "Fetch",
         {
           :method      => "GET",
-          :bucket      => "johnsmith",
-          :subresource => "acl",
+          :uri         => "http://johnsmith.s3.amazonaws.com/?acl",
           :date        => "Tue, 27 Mar 2007 19:44:46 +0000"
         },
         "GET\n\n\nTue, 27 Mar 2007 19:44:46 +0000\n/johnsmith/?acl"
@@ -52,8 +50,7 @@ describe AWSRaw::S3::Authentication::StringToSign do
       test_example "Delete",
         {
           :method => "DELETE",
-          :bucket => "johnsmith",
-          :key    => "photos/puppy.jpg",
+          :uri    => "http://s3.amazonaws.com/johnsmith/photos/puppy.jpg",
           :date   => "Tue, 27 Mar 2007 21:20:26 +0000"
         },
         "DELETE\n\n\nTue, 27 Mar 2007 21:20:26 +0000\n/johnsmith/photos/puppy.jpg"
@@ -61,8 +58,7 @@ describe AWSRaw::S3::Authentication::StringToSign do
       test_example "Upload",
         {
           :method       => "PUT",
-          :bucket       => "static.johnsmith.net",
-          :key          => "db-backup.dat.gz",
+          :uri          => "http://static.johnsmith.net:8080/db-backup.dat.gz",
           :date         => "Tue, 27 Mar 2007 21:06:08 +0000",
           :content_md5  => "4gJE4saaMU4BqNR0kLY+lw==",
           :content_type => "application/x-download",
@@ -78,6 +74,7 @@ describe AWSRaw::S3::Authentication::StringToSign do
       test_example "List All My Buckets",
         {
           :method => "GET",
+          :uri    => "http://s3.amazonaws.com/",
           :date   => "Wed, 28 Mar 2007 01:29:59 +0000",
         },
         "GET\n\n\nWed, 28 Mar 2007 01:29:59 +0000\n/"
@@ -85,11 +82,56 @@ describe AWSRaw::S3::Authentication::StringToSign do
       test_example "Unicode Keys",
         {
           :method => "GET",
-          :bucket => "dictionary",
-          :key    => "fran%C3%A7ais/pr%c3%a9f%c3%a8re",
+          :uri    => "http://s3.amazonaws.com/dictionary/fran%C3%A7ais/pr%c3%a9f%c3%a8re",
           :date   => "Wed, 28 Mar 2007 01:49:49 +0000"
         },
         "GET\n\n\nWed, 28 Mar 2007 01:49:49 +0000\n/dictionary/fran%C3%A7ais/pr%c3%a9f%c3%a8re"
+    end
+  end
+
+  context ".canonicalized_resource" do
+    it "works for a virtual-host-style request" do
+      expect(subject.canonicalized_resource("http://johnsmith.s3.amazonaws.com/puppies.jpg")).to eq("/johnsmith/puppies.jpg")
+    end
+
+    it "works for a path-style request" do
+      expect(subject.canonicalized_resource("http://s3.amazonaws.com/johnsmith/puppies.jpg")).to eq("/johnsmith/puppies.jpg")
+    end
+  end
+
+  context ".bucket_from_hostname" do
+    it "gets the bucket from virtual-host-style requests in the default region" do
+      expect(subject.bucket_from_hostname("johnsmith.net.s3.amazonaws.com")).to eq("johnsmith.net")
+    end
+
+    it "gets the bucket from virtual-host-style requests in other regions" do
+      expect(subject.bucket_from_hostname("johnsmith.net.s3-eu-west-1.amazonaws.com")).to eq("johnsmith.net")
+    end
+
+    it "gets the bucket from cname-style requests" do
+      expect(subject.bucket_from_hostname("johnsmith.net")).to eq("johnsmith.net")
+    end
+
+    it "doesn't get the bucket for path-style requests in the default region" do
+      expect(subject.bucket_from_hostname("s3.amazonaws.com")).to be_nil
+    end
+
+    it "doesn't get the bucket for path-style requests in other regions" do
+      expect(subject.bucket_from_hostname("s3-eu-west-1.amazonaws.com")).to be_nil
+    end
+  end
+
+  context ".canonicalized_subresources" do
+    it "includes valid subresources" do
+      expect(subject.canonicalized_subresources("acl")).to eq("?acl")
+    end
+
+    it "excludes invalid subresources" do
+      expect(subject.canonicalized_subresources("rhubarb")).to be_nil
+    end
+
+    it "sorts the subresources" do
+      expect(subject.canonicalized_subresources("website&acl")).to eq("?acl&website")
     end
   end
 
