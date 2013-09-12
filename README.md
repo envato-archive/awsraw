@@ -9,6 +9,9 @@ AWSRaw has a simple goal: to let you follow the [AWS REST API
 docs](http://docs.aws.amazon.com/AmazonS3/latest/API/APIRest.html), and
 translate that into Ruby code with the minimum of fuss.
 
+This is the opposite of [fog](http://fog.io). AWSRaw tries to add as little
+abstraction as possible on top of the AWS REST API.
+
 You use a regular HTTP library to make requests, and AWSRaw provides useful
 additions like request signing.
 
