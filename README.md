@@ -5,56 +5,51 @@ A client for [Amazon Web Services](http://www.amazonaws.com/) in the style of
 
 ## Background
 
-AWSRaw helps you make authenticated requests to AWS's various services. It
-doesn't provide any higher-level concepts like, for example, "delete this
-file from S3". Instead, you should understand S3's http API and know that
-sending a `DELETE` request to the bucket/key URL will result in the file
-being deleted.
+AWSRaw has a simple goal: to let you follow the [AWS REST API
+docs](http://docs.aws.amazon.com/AmazonS3/latest/API/APIRest.html), and
+translate that into Ruby code with the minimum of fuss.
 
-While these higher-level concepts can be useful (see, e.g.,
-[fog](https://github.com/fog/fog)), they can also get in the way. Being
-able to use a new AWS feature by simply following the AWS docs' examples
-directly is very nice, instead of having to dig deep into a higher-level
-library to figure out how they've mapped that new feature into their
-terminology and API.
+You use a regular HTTP library to make requests, and AWSRaw provides useful
+additions like request signing.
 
-## Usage
+Right now AWSRaw only has direct support for
+[Faraday](https://github.com/lostisland/faraday), but you could still use it
+with other client libraries with a bit of work.
+
+So far we've only built S3 support. We'd love to see pull requests for other
+AWS services.
+
+
+## Examples
 
 ### S3
 
-Standard requests:
-
 ```ruby
-require 'awsraw/s3/client'
+credentials = AWSRaw::Credentials.new(:access_key_id => "...", :secret_access_key => "...")
 
-s3 = AWSRaw::S3::Client.new(
-       ENV['AWS_ACCESS_KEY_ID'],
-       ENV['AWS_SECRET_ACCESS_KEY'])
+signer = AWSRaw::S3::FaradayRequestSigner.new(credentials)
 
-file = File.open("reaction.gif", "rb")
+connection = Faraday.new do |faraday|
+  faraday.response :logger
+  faraday.adapter  Faraday.default_adapter
+end
 
-s3.request(:method  => "PUT",
-           :bucket  => "mah-sekret-buckit",
-           :key     => "/reaction.gif",
-           :content => file,
-           :headers => { "Content-Type" => "image/gif" })
-
-f.close
+connection.get do |request|
+  request.url 'http://s3.amazonaws.com/mah-sekret-buckit/reaction.gif'
+  signer.sign_request(request)
+end
 ```
 
-Signed query-string requests, to allow authorized clients to get protected
-resources:
 
-```ruby
-require 'awsraw/s3/query_string_signer'
+## Status
 
-signer = AWSRaw::S3::QueryStringSigner.new(
-           ENV['AWS_ACCESS_KEY_ID'],
-           ENV['AWS_SECRET_ACCESS_KEY'])
+This is still a bit experimental, and is missing some key features, but what's
+there is solid and well tested.
 
-url = "http://s3.amazonaws.com/mah-sekret-bucket/reaction.gif"
-expiry = Time.now.utc + 60 # 1 minute from now
-temporary_url = signer.sign_with_query_string(url, expiry.to_i)
-puts temporary_url
-  # => "http://s3.amazonaws.com/mah-sekret-bucket/reaction.gif?Signature=..."
-```
+
+## TODO
+
+- Doc on how to signed query-string requests
+- Support AWS services other than S3
+- Support for Net::HTTP (and other client libraries?)
+
