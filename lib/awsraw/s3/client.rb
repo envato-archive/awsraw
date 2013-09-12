@@ -1,4 +1,5 @@
 require 'net/http'
+require 'awsraw/s3'
 require 'awsraw/s3/request'
 require 'awsraw/s3/http_request_builder'
 require 'awsraw/s3/response'
