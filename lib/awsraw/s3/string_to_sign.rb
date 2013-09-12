@@ -1,3 +1,5 @@
+require 'awsraw/s3/canonicalized_resource'
+
 module AWSRaw
   module S3
 
