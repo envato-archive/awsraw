@@ -1,7 +1,7 @@
-require 'awsraw/s3/authentication/authorization_header'
+require 'awsraw/s3/authorization_header'
 require 'ostruct'
 
-describe AWSRaw::S3::Authentication::AuthorizationHeader do
+describe AWSRaw::S3::AuthorizationHeader do
 
   context ".authorization_header" do
     context "AWS example tests:" do
