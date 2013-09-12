@@ -28,7 +28,7 @@ require 'awsraw/s3/client'
 # Assuming we have a fake S3 service listening on `fake.s3.dev`
 AWSRaw::S3.configure do |config|
   config.host = 'fake.s3.dev'
-  config_regional_hosts = {
+  config.regional_hosts = {
     'ap-southeast-2' => 'fake.s3.dev'
   }
 end
