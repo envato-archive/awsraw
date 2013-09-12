@@ -38,9 +38,9 @@ module AWSRaw
 
       def host
         if @region && @region != US_STANDARD
-          "s3-#{@region}.amazonaws.com"
+          S3.configuration.regional_hosts[@region]
         else
-          "s3.amazonaws.com"
+          S3.configuration.host
         end
       end
 
