@@ -48,6 +48,11 @@ there is solid and well tested.
 
 ## TODO
 
+- Support for request content
+- Smart handling of errors
+    - Identify cases where string-to-sign doesn't match, and display something helpful
+    - Raise exceptions for errors?
+- Easy was to nicely format XML responses
 - Doc on how to signed query-string requests
 - Support AWS services other than S3
 - Support for Net::HTTP (and other client libraries?)
