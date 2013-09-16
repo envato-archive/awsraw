@@ -5,9 +5,9 @@ A client for [Amazon Web Services](http://www.amazonaws.com/) in the style of
 
 ## Background
 
-AWSRaw has a simple goal: to let you follow the [AWS REST API
-docs](http://docs.aws.amazon.com/AmazonS3/latest/API/APIRest.html), and
-translate that into Ruby code with the minimum of fuss.
+AWSRaw has a simple goal: to let you follow the [AWS API
+docs](http://aws.amazon.com/documentation/), and translate that into Ruby code
+with the minimum of fuss.
 
 This is the opposite of [fog](http://fog.io). AWSRaw tries to add as little
 abstraction as possible on top of the AWS REST API.
@@ -26,6 +26,8 @@ AWS services.
 ## Examples
 
 ### S3
+
+See the [AWS S3 REST API docs](http://docs.aws.amazon.com/AmazonS3/latest/API/APIRest.html).
 
 ```ruby
 credentials = AWSRaw::Credentials.new(:access_key_id => "...", :secret_access_key => "...")
@@ -53,7 +55,7 @@ there is solid and well tested.
     - Identify cases where string-to-sign doesn't match, and display something helpful
     - Raise exceptions for errors?
 - Easy was to nicely format XML responses
-- Doc on how to signed query-string requests
+- Doc on how to sign query-string requests
 - Support AWS services other than S3
 - Support for Net::HTTP (and other client libraries?)
 
