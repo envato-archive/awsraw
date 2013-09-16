@@ -30,13 +30,13 @@ AWS services.
 ```ruby
 credentials = AWSRaw::Credentials.new(:access_key_id => "...", :secret_access_key => "...")
 
-connection = Faraday.new do |faraday|
+connection = Faraday.new("http://s3.amazonaws.com") do |faraday|
   faraday.use      AWSRaw::S3::FaradayMiddleware, credentials
   faraday.response :logger
   faraday.adapter  Faraday.default_adapter
 end
 
-connection.get 'http://s3.amazonaws.com/mah-sekret-buckit/reaction.gif'
+response = connection.get("/mah-sekret-buckit/reaction.gif")
 ```
 
 
