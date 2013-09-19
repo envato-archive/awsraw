@@ -31,8 +31,6 @@ credentials = AWSRaw::Credentials.new(
 
 ### S3
 
-See the [AWS S3 REST API docs](http://docs.aws.amazon.com/AmazonS3/latest/API/APIRest.html).
-
 ```ruby
 connection = Faraday.new("http://s3.amazonaws.com") do |faraday|
   faraday.use      AWSRaw::S3::FaradayMiddleware, credentials
@@ -43,11 +41,14 @@ end
 response = connection.get("/mah-sekret-buckit/reaction.gif")
 ```
 
+See the [AWS S3 REST API docs](http://docs.aws.amazon.com/AmazonS3/latest/API/APIRest.html)
+for all the requests you can make.
+
+
 #### Signing query strings
 
 If you need a signed URI with an expiry date, this is how to do it.
 
-See the [AWS docs on the subject](http://docs.aws.amazon.com/AmazonS3/latest/dev/RESTAuthentication.html#RESTAuthenticationQueryStringAuth).
 
 ```ruby
 signer = AWSRaw::S3::QueryStringSigner.new(credentials)
@@ -57,6 +58,9 @@ uri = signer.sign(
   Time.now + 600 # The URI will expire in 10 minutes.
 )
 ```
+
+See the [AWS docs on the subject](http://docs.aws.amazon.com/AmazonS3/latest/dev/RESTAuthentication.html#RESTAuthenticationQueryStringAuth).
+
 
 ## Status
 
