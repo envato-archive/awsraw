@@ -1,4 +1,4 @@
-# awsraw
+# AWSRaw
 
 A client for [Amazon Web Services](http://www.amazonaws.com/) in the style of
 [FlickRaw](http://hanklords.github.com/flickraw/)
@@ -15,23 +15,25 @@ abstraction as possible on top of the AWS REST API.
 You use a regular HTTP library to make requests, and AWSRaw provides useful
 additions like request signing.
 
-Right now AWSRaw only has direct support for
-[Faraday](https://github.com/lostisland/faraday), but you could still use it
-with other client libraries with a bit of work.
-
-So far we've only built S3 support. We'd love to see pull requests for other
-AWS services.
-
 
 ## Examples
+
+### Credentials
+
+For all the examples below, you'll need to set up your credentials like this:
+
+```ruby
+credentials = AWSRaw::Credentials.new(
+  :access_key_id     => "...",
+  :secret_access_key => "..."
+)
+```
 
 ### S3
 
 See the [AWS S3 REST API docs](http://docs.aws.amazon.com/AmazonS3/latest/API/APIRest.html).
 
 ```ruby
-credentials = AWSRaw::Credentials.new(:access_key_id => "...", :secret_access_key => "...")
-
 connection = Faraday.new("http://s3.amazonaws.com") do |faraday|
   faraday.use      AWSRaw::S3::FaradayMiddleware, credentials
   faraday.response :logger
@@ -48,18 +50,25 @@ If you need a signed URI with an expiry date, this is how to do it.
 See the [AWS docs on the subject](http://docs.aws.amazon.com/AmazonS3/latest/dev/RESTAuthentication.html#RESTAuthenticationQueryStringAuth).
 
 ```ruby
-credentials = AWSRaw::Credentials.new(:access_key_id => "...", :secret_access_key => "...")
-
 signer = AWSRaw::S3::QueryStringSigner.new(credentials)
 
-uri = signer.sign("https://s3.amazonaws.com/mah-sekret-buckit/reaction.gif", Time.now + 600)
+uri = signer.sign(
+  "https://s3.amazonaws.com/mah-sekret-buckit/reaction.gif",
+  Time.now + 600 # The URI will expire in 10 minutes.
+)
 ```
-
 
 ## Status
 
 This is still a bit experimental, and is missing some key features, but what's
 there is solid and well tested.
+
+Right now AWSRaw only has direct support for
+[Faraday](https://github.com/lostisland/faraday), but you could still use it
+with other client libraries with a bit of work.
+
+So far we've only built S3 support. We'd love to see pull requests for other
+AWS services.
 
 
 ## Contributing
