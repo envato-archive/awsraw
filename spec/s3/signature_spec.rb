@@ -1,24 +1,24 @@
-require 'awsraw/s3/authorization_header'
+require 'awsraw/s3/signature'
 require 'ostruct'
 
-describe AWSRaw::S3::AuthorizationHeader do
+describe AWSRaw::S3::Signature do
 
-  context ".authorization_header" do
+  let(:credentials) do
+    OpenStruct.new(
+      :access_key_id     => "AKIAIOSFODNN7EXAMPLE",
+      :secret_access_key => "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+    )
+  end
+
+  context ".signature" do
     context "AWS example tests:" do
       # Examples are pulled from the AWS docs:
       # http://docs.aws.amazon.com/AmazonS3/latest/dev/RESTAuthentication.html
 
-      let(:credentials) do
-        OpenStruct.new(
-          :access_key_id     => "AKIAIOSFODNN7EXAMPLE",
-          :secret_access_key => "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
-        )
-      end
-
       def self.test_example(title, string_to_sign, signature)
         it "#{title} works" do
-          header = described_class.authorization_header(string_to_sign, credentials)
-          expect(header).to eq("AWS #{credentials.access_key_id}:#{signature}")
+          header = described_class.signature(string_to_sign, credentials)
+          expect(header).to eq(signature)
         end
       end
 
@@ -53,6 +53,13 @@ describe AWSRaw::S3::AuthorizationHeader do
       test_example "Unicode Keys",
         "GET\n\n\nWed, 28 Mar 2007 01:49:49 +0000\n/dictionary/fran%C3%A7ais/pr%c3%a9f%c3%a8re",
         "DNEZGsoieTZ92F3bUfSPQcbGmlM="
+    end
+  end
+
+  context ".authorization_header" do
+    it "structures the header correctly" do
+      header = described_class.authorization_header("GET\n\n\nTue, 27 Mar 2007 19:36:42 +0000\n/johnsmith/photos/puppy.jpg", credentials)
+      expect(header).to eq("AWS #{credentials.access_key_id}:bWq2s1WEIj+Ydj0vQ697zp+IXMU=")
     end
   end
 

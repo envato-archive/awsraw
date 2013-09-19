@@ -1,5 +1,5 @@
 require 'awsraw/s3/string_to_sign'
-require 'awsraw/s3/authorization_header'
+require 'awsraw/s3/signature'
 
 module AWSRaw
   module S3
@@ -20,7 +20,7 @@ module AWSRaw
           :date   => expires.to_i
         )
 
-        signature = AuthorizationHeader.signature(string_to_sign, @credentials)
+        signature = Signature.signature(string_to_sign, @credentials)
 
         URI(uri).tap do |signed_uri|
           signed_uri.query = URI.encode_www_form(

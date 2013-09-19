@@ -23,7 +23,7 @@ module AWSRaw
           :amz_headers  => env[:request_headers]
         )
 
-        env[:request_headers]['Authorization'] = AuthorizationHeader.authorization_header(string_to_sign, @credentials)
+        env[:request_headers]['Authorization'] = Signature.authorization_header(string_to_sign, @credentials)
 
         @app.call(env).on_complete do
           # do something with the response

@@ -1,7 +1,7 @@
 # AWSRaw
 
 A client for [Amazon Web Services](http://www.amazonaws.com/) in the style of
-[FlickRaw](http://hanklords.github.com/flickraw/)
+[FlickRaw](http://hanklords.github.com/flickraw/).
 
 ## Background
 
@@ -84,14 +84,12 @@ AWS services.
 5. Create new Pull Request
 
 
-## TODO
+## To Do
 
-- Rename the AuthorizationHeader class, as the name no longer quite fits
-- Support for request content
-- Smart handling of errors
+- Write the missing spec for AWSRaw::S3::FaradayMiddleware
+- Add support for request content
+- Add smart handling of errors
     - Identify cases where string-to-sign doesn't match, and display something helpful
     - Raise exceptions for errors?
-- Easy was to nicely format XML responses
-- Support AWS services other than S3
-- Support for Net::HTTP (and other client libraries?)
+- Add easy ways to nicely format XML responses
 
