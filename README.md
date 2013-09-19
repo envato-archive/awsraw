@@ -86,7 +86,6 @@ AWS services.
 
 ## To Do
 
-- Write the missing spec for AWSRaw::S3::FaradayMiddleware
 - Add support for request content
 - Add smart handling of errors
     - Identify cases where string-to-sign doesn't match, and display something helpful
