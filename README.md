@@ -41,6 +41,20 @@ end
 response = connection.get("/mah-sekret-buckit/reaction.gif")
 ```
 
+#### Signing query strings
+
+If you need a signed URI with an expiry date, this is how to do it.
+
+See the [AWS docs on the subject](http://docs.aws.amazon.com/AmazonS3/latest/dev/RESTAuthentication.html#RESTAuthenticationQueryStringAuth).
+
+```ruby
+credentials = AWSRaw::Credentials.new(:access_key_id => "...", :secret_access_key => "...")
+
+signer = AWSRaw::S3::QueryStringSigner.new(credentials)
+
+uri = signer.sign("https://s3.amazonaws.com/mah-sekret-buckit/reaction.gif", Time.now + 600)
+```
+
 
 ## Status
 
@@ -59,12 +73,12 @@ there is solid and well tested.
 
 ## TODO
 
+- Rename the AuthorizationHeader class, as the name no longer quite fits
 - Support for request content
 - Smart handling of errors
     - Identify cases where string-to-sign doesn't match, and display something helpful
     - Raise exceptions for errors?
 - Easy was to nicely format XML responses
-- Doc on how to sign query-string requests
 - Support AWS services other than S3
 - Support for Net::HTTP (and other client libraries?)
 
