@@ -45,9 +45,25 @@ See the [AWS S3 REST API docs](http://docs.aws.amazon.com/AmazonS3/latest/API/AP
 for all the requests you can make.
 
 
+#### On request bodies
+
+If your request has a body and you don't provide a Content-MD5 header for it,
+AWSRaw will try to calculate one. (The S3 API requires the Content-MD5 header
+for correct request signing.)
+
+It can handle the body behaving as either a String or a File. If you want to do
+something different with the body, you'll need to set the Content-MD5 header
+yourself.
+
+You must also provide a Content-Type header for your request if there's a
+request body. AWSRaw will raise an exception if you don't.
+
+
 #### Signing query strings
 
-If you need a signed URI with an expiry date, this is how to do it.
+If you need a signed URI with an expiry date, this is how to do it. See the
+[AWS docs on the
+subject](http://docs.aws.amazon.com/AmazonS3/latest/dev/RESTAuthentication.html#RESTAuthenticationQueryStringAuth).
 
 
 ```ruby
@@ -58,8 +74,6 @@ uri = signer.sign(
   Time.now + 600 # The URI will expire in 10 minutes.
 )
 ```
-
-See the [AWS docs on the subject](http://docs.aws.amazon.com/AmazonS3/latest/dev/RESTAuthentication.html#RESTAuthenticationQueryStringAuth).
 
 
 #### HTML Form Uploads
@@ -111,7 +125,6 @@ AWS services.
 
 ## To Do
 
-- Add support for request content
 - Add smart handling of errors
     - Identify cases where string-to-sign doesn't match, and display something helpful
     - Raise exceptions for errors?

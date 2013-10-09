@@ -39,7 +39,7 @@ describe AWSRaw::S3::FaradayMiddleware do
     Time.stub(:now => time) # Freeze time for the duration of the test.
 
     env = {
-      :method          => "GET",
+      :method          => :get,
       :url             => "http://s3.amazonaws.com/",
       :request_headers => {}
     }
@@ -47,8 +47,42 @@ describe AWSRaw::S3::FaradayMiddleware do
     expect(env[:request_headers]["Date"]).to eq(time.httpdate)
   end
 
-  it "automatically calculates the MD5 for body content"
+  it "calculates the Content-MD5 header from the body if there isn't one" do
+    env = {
+      :method          => :put,
+      :url             => "http://s3.amazonaws.com/johnsmith/my-file.txt",
+      :body            => "rhubarb",
+      :request_headers => {
+        "Content-Type" => "text/plain"
+      }
+    }
+    subject.call(env)
+    expect(env[:request_headers]["Content-MD5"]).to eq("lBxzvNO0KqwdCwPVMx2IYQ==")
+  end
 
-  it "blows up if you have a request body, but no content type"
+  it "lets you manually set the Content-MD5 header" do
+    env = {
+      :method          => :put,
+      :url             => "http://s3.amazonaws.com/johnsmith/my-file.txt",
+      :body            => "rhubarb",
+      :request_headers => {
+        "Content-Type" => "text/plain",
+        "Content-MD5"  => "test-content-md5"
+      }
+    }
+    subject.call(env)
+    expect(env[:request_headers]["Content-MD5"]).to eq("test-content-md5")
+
+  end
+
+  it "blows up if you have a request body, but no content type" do
+    env = {
+      :method          => :put,
+      :url             => "http://s3.amazonaws.com/johnsmith/my-file.txt",
+      :body            => "rhubarb",
+      :request_headers => { }
+    }
+    expect { subject.call(env) }.to raise_error(AWSRaw::Error, "Can't make a request with a body but no Content-Type header")
+  end
 
 end
