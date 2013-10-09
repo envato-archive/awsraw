@@ -31,14 +31,30 @@ credentials = AWSRaw::Credentials.new(
 
 ### S3
 
+Set up your Faraday connection something like this:
+
 ```ruby
 connection = Faraday.new("http://s3.amazonaws.com") do |faraday|
   faraday.use      AWSRaw::S3::FaradayMiddleware, credentials
   faraday.response :logger
   faraday.adapter  Faraday.default_adapter
 end
+```
 
+A simple GET request:
+
+```ruby
 response = connection.get("/mah-sekret-buckit/reaction.gif")
+```
+
+A PUT request:
+
+```ruby
+connection.put do |request|
+  request.url '/mah-sekret-buckit/reaction.gif'
+  req.headers['Content-Type'] = 'image/gif'
+  req.body = File.new("reaction.gif")
+end
 ```
 
 See the [AWS S3 REST API docs](http://docs.aws.amazon.com/AmazonS3/latest/API/APIRest.html)
