@@ -4,7 +4,7 @@ require "awsraw/version"
 
 Gem::Specification.new do |s|
   s.name        = "awsraw"
-  s.version     = Awsraw::VERSION
+  s.version     = AWSRaw::VERSION
   s.authors     = ["Pete Yandell", "David Goodlad", "Jack 'chendo' Chen"]
   s.email       = ["pete@notahat.com", "david@goodlad.net", "gems.awsraw@chen.do"]
   s.license     = 'MIT'
