@@ -51,9 +51,9 @@ A PUT request:
 
 ```ruby
 connection.put do |request|
-  request.url '/mah-sekret-buckit/reaction.gif'
-  req.headers['Content-Type'] = 'image/gif'
-  req.body = File.new("reaction.gif")
+  request.url "/mah-sekret-buckit/reaction.gif"
+  request.headers["Content-Type"] = "image/gif"
+  request.body = File.new("reaction.gif")
 end
 ```
 
