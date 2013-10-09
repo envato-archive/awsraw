@@ -62,6 +62,31 @@ uri = signer.sign(
 See the [AWS docs on the subject](http://docs.aws.amazon.com/AmazonS3/latest/dev/RESTAuthentication.html#RESTAuthenticationQueryStringAuth).
 
 
+#### HTML Form Uploads
+
+You can use AWSRaw to generate signatures for browser-based uploads. See the
+[AWS docs on the
+topic](http://docs.aws.amazon.com/AmazonS3/latest/dev/UsingHTTPPOST.html).
+
+```ruby
+policy = [
+  { "bucket" => "mah-secret-buckit" }
+]
+
+policy_json = JSON.generate(policy)
+
+http_post_variables = {
+  "AWSAccessKeyID" => credentials.access_key_id,
+  "key"            => "reaction.gif",
+  "policy"         => AWSRaw::S3::Signature.encode_form_policy(policy_json),
+  "signature"      => AWSRaw::S3::Signature.form_signature(policy_json, credentials)
+}
+```
+
+Then get your browser to do an XHR request using the http_post_variables, and
+Bob's your aunty.
+
+
 ## Status
 
 This is still a bit experimental, and is missing some key features, but what's
