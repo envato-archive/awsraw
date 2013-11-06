@@ -1,76 +1,148 @@
-# awsraw
+# AWSRaw
 
 A client for [Amazon Web Services](http://www.amazonaws.com/) in the style of
-[FlickRaw](http://hanklords.github.com/flickraw/)
+[FlickRaw](http://hanklords.github.com/flickraw/).
 
 ## Background
 
-AWSRaw helps you make authenticated requests to AWS's various services. It
-doesn't provide any higher-level concepts like, for example, "delete this
-file from S3". Instead, you should understand S3's http API and know that
-sending a `DELETE` request to the bucket/key URL will result in the file
-being deleted.
+AWSRaw has a simple goal: to let you follow the [AWS API
+docs](http://aws.amazon.com/documentation/), and translate that into Ruby code
+with the minimum of fuss.
 
-While these higher-level concepts can be useful (see, e.g.,
-[fog](https://github.com/fog/fog)), they can also get in the way. Being
-able to use a new AWS feature by simply following the AWS docs' examples
-directly is very nice, instead of having to dig deep into a higher-level
-library to figure out how they've mapped that new feature into their
-terminology and API.
+This is the opposite of [fog](http://fog.io). AWSRaw tries to add as little
+abstraction as possible on top of the AWS REST API.
 
-## Configuration
+You use a regular HTTP library to make requests, and AWSRaw provides useful
+additions like request signing.
 
-If you need to override the AWS hostname for development/testing purposes, you can do so as follows:
+
+## Examples
+
+### Credentials
+
+For all the examples below, you'll need to set up your credentials like this:
 
 ```ruby
-require 'awsraw/s3/client'
-
-# Assuming we have a fake S3 service listening on `fake.s3.dev`
-AWSRaw::S3.configure do |config|
-  config.host = 'fake.s3.dev'
-  config.regional_hosts = {
-    'ap-southeast-2' => 'fake.s3.dev'
-  }
-end
+credentials = AWSRaw::Credentials.new(
+  :access_key_id     => "...",
+  :secret_access_key => "..."
+)
 ```
-
-## Usage
 
 ### S3
 
-Standard requests:
+Set up your Faraday connection something like this:
 
 ```ruby
-require 'awsraw/s3/client'
-
-s3 = AWSRaw::S3::Client.new(
-       ENV['AWS_ACCESS_KEY_ID'],
-       ENV['AWS_SECRET_ACCESS_KEY'])
-
-file = File.open("reaction.gif", "rb")
-
-s3.request(:method  => "PUT",
-           :bucket  => "mah-sekret-buckit",
-           :key     => "/reaction.gif",
-           :content => file,
-           :headers => { "Content-Type" => "image/gif" })
-
-f.close
+connection = Faraday.new("http://s3.amazonaws.com") do |faraday|
+  faraday.use      AWSRaw::S3::FaradayMiddleware, credentials
+  faraday.response :logger
+  faraday.adapter  Faraday.default_adapter
+end
 ```
 
-Signed query-string requests, to allow authorized clients to get protected
-resources:
+A simple GET request:
 
 ```ruby
-require 'awsraw/s3/query_string_signer'
-
-signer = AWSRaw::S3::QueryStringSigner.new(
-           ENV['AWS_ACCESS_KEY_ID'],
-           ENV['AWS_SECRET_ACCESS_KEY'])
-
-url = "http://s3.amazonaws.com/mah-sekret-bucket/reaction.gif"
-expiry = Time.now.utc + 60 # 1 minute from now
-temporary_url = signer.sign_with_query_string(url, expiry.to_i)
-puts temporary_url
-  # => "http://s3.amazonaws.com/mah-sekret-bucket/reaction.gif?Signature=..."
+response = connection.get("/mah-sekret-buckit/reaction.gif")
 ```
+
+A PUT request:
+
+```ruby
+connection.put do |request|
+  request.url "/mah-sekret-buckit/reaction.gif"
+  request.headers["Content-Type"] = "image/gif"
+  request.body = File.new("reaction.gif")
+end
+```
+
+See the [AWS S3 REST API docs](http://docs.aws.amazon.com/AmazonS3/latest/API/APIRest.html)
+for all the requests you can make.
+
+
+#### On request bodies
+
+If your request has a body and you don't provide a Content-MD5 header for it,
+AWSRaw will try to calculate one. (The S3 API requires the Content-MD5 header
+for correct request signing.)
+
+It can handle the body behaving as either a String or a File. If you want to do
+something different with the body, you'll need to set the Content-MD5 header
+yourself.
+
+You must also provide a Content-Type header for your request if there's a
+request body. AWSRaw will raise an exception if you don't.
+
+
+#### Signing query strings
+
+If you need a signed URI with an expiry date, this is how to do it. See the
+[AWS docs on the
+subject](http://docs.aws.amazon.com/AmazonS3/latest/dev/RESTAuthentication.html#RESTAuthenticationQueryStringAuth).
+
+
+```ruby
+signer = AWSRaw::S3::QueryStringSigner.new(credentials)
+
+uri = signer.sign(
+  "https://s3.amazonaws.com/mah-sekret-buckit/reaction.gif",
+  Time.now + 600 # The URI will expire in 10 minutes.
+)
+```
+
+
+#### HTML Form Uploads
+
+You can use AWSRaw to generate signatures for browser-based uploads. See the
+[AWS docs on the
+topic](http://docs.aws.amazon.com/AmazonS3/latest/dev/UsingHTTPPOST.html).
+
+```ruby
+policy = [
+  { "bucket" => "mah-secret-buckit" }
+]
+
+policy_json = JSON.generate(policy)
+
+http_post_variables = {
+  "AWSAccessKeyID" => credentials.access_key_id,
+  "key"            => "reaction.gif",
+  "policy"         => AWSRaw::S3::Signature.encode_form_policy(policy_json),
+  "signature"      => AWSRaw::S3::Signature.form_signature(policy_json, credentials)
+}
+```
+
+Then get your browser to do an XHR request using the http_post_variables, and
+Bob's your aunty.
+
+
+## Status
+
+This is still a bit experimental, and is missing some key features, but what's
+there is solid and well tested.
+
+Right now AWSRaw only has direct support for
+[Faraday](https://github.com/lostisland/faraday), but you could still use it
+with other client libraries with a bit of work.
+
+So far we've only built S3 support. We'd love to see pull requests for other
+AWS services.
+
+
+## Contributing
+
+1. Fork it
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Commit your changes (`git commit -am 'Add some feature'`)
+4. Push to the branch (`git push origin my-new-feature`)
+5. Create new Pull Request
+
+
+## To Do
+
+- Add smart handling of errors
+    - Identify cases where string-to-sign doesn't match, and display something helpful
+    - Raise exceptions for errors?
+- Add easy ways to nicely format XML responses
+

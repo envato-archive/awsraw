@@ -1,35 +1,42 @@
-require 'net/http'
-require 'awsraw/s3'
-require 'awsraw/s3/request'
-require 'awsraw/s3/http_request_builder'
-require 'awsraw/s3/response'
-require 'awsraw/s3/signer'
-require 'awsraw/s3/md5_digester'
+require 'uri'
+require 'faraday'
+require 'awsraw/credentials'
+require 'awsraw/s3/faraday_middleware'
+
 module AWSRaw
   module S3
 
-    class ConnectionError < StandardError; end
-
-    # A client for the AWS S3 rest API.
-    #
-    # http://docs.amazonwebservices.com/AmazonS3/latest/API/APIRest.html
+    # Legacy client, to support AWSRaw pre-1.0 requests. You shouldn't be using
+    # this anymore.
     class Client
 
       def initialize(access_key_id, secret_access_key)
-        @access_key_id     = access_key_id
-        @secret_access_key = secret_access_key
+        @credentials = AWSRaw::Credentials.new(
+          :access_key_id     => access_key_id,
+          :secret_access_key => secret_access_key
+        )
       end
 
       def request(params = {})
-        request = Request.new(params, signer)
+        host = params[:region] ? "s3-#{params[:region]}.amazonaws.com" : "s3.amazonaws.com"
+        path = URI.escape("/#{params[:bucket]}#{params[:key]}")
+        url = URI::HTTP.build(
+          :host  => host,
+          :path  => path,
+          :query => params[:query]
+        )
 
-        http_request = HTTPRequestBuilder.new(request).build
-
-        http_response = Net::HTTP.start(request.uri.host, request.uri.port) do |http|
-          http.request(http_request)
+        faraday_response = connection.send(params[:method].downcase) do |request|
+          request.url(url)
+          request.headers = params[:headers] || {}
+          request.body    = params[:content]
         end
 
-        construct_response(http_response)
+        Response.new(
+          :code    => faraday_response.status,
+          :headers => faraday_response.headers,
+          :content => faraday_response.body
+        )
       end
 
       def request!(params = {})
@@ -39,18 +46,33 @@ module AWSRaw
 
     private
 
-      def construct_response(http_response)
-        Response.new(
-          :code    => http_response.code,
-          :headers => http_response.to_hash,
-          :content => http_response.body
-        )
+      def connection
+        @connection ||= Faraday.new do |faraday|
+          faraday.use     AWSRaw::S3::FaradayMiddleware, @credentials
+          faraday.adapter Faraday.default_adapter
+        end
       end
 
-      def signer
-        @signer ||= Signer.new(@access_key_id, @secret_access_key)
+    end
+
+    class Response
+      def initialize(params = {})
+        @code    = params[:code]
+        @headers = params[:headers]
+        @content = params[:content]
       end
 
+      attr_accessor :code
+      attr_accessor :headers
+      attr_accessor :content
+
+      def success?
+        code =~ /^2\d\d$/
+      end
+
+      def failure?
+        !success?
+      end
     end
 
   end

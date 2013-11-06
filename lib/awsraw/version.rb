@@ -1,3 +1,3 @@
-module Awsraw
-  VERSION = "0.1.8"
+module AWSRaw
+  VERSION = "1.0.0.alpha.1"
 end

@@ -4,9 +4,9 @@ require "awsraw/version"
 
 Gem::Specification.new do |s|
   s.name        = "awsraw"
-  s.version     = Awsraw::VERSION
-  s.authors     = ["Pete Yandell", "David Goodlad", "Jack 'chendo' Chen", "Warren Seen"]
-  s.email       = ["pete@notahat.com", "david@goodlad.net", "gems.awsraw@chen.do", "warren@warrenseen.com"]
+  s.version     = AWSRaw::VERSION
+  s.authors     = ["Pete Yandell", "David Goodlad", "Jack 'chendo' Chen"]
+  s.email       = ["pete@notahat.com", "david@goodlad.net", "gems.awsraw@chen.do"]
   s.license     = 'MIT'
   s.homepage    = "http://github.com/envato/awsraw"
   s.summary     = %q{Minimal AWS client}
@@ -21,6 +21,7 @@ Gem::Specification.new do |s|
 
   # specify any dependencies here; for example:
   s.add_development_dependency "rake"
-  s.add_development_dependency "rspec"
-  # s.add_runtime_dependency "rest-client"
+  s.add_development_dependency "rspec", "~> 2.14"
+  s.add_runtime_dependency "finer_struct", "~> 0.0.5"
+  s.add_runtime_dependency "faraday", "~> 0.8.8"
 end
