@@ -1,19 +1,20 @@
 # AWSRaw
 
-A client for [Amazon Web Services](http://www.amazonaws.com/) in the style of
+A client for [Amazon Web Services](http://www.amazonaws.com/) inspired by
 [FlickRaw](http://hanklords.github.com/flickraw/).
+
 
 ## Background
 
 AWSRaw has a simple goal: to let you follow the [AWS API
 docs](http://aws.amazon.com/documentation/), and translate that into Ruby code
-with the minimum of fuss.
+with the minimum of fuss. It adds as little abstraction as possible on top of
+the AWS REST API. (Think of it as the opposite of [fog](http://fog.io).)
 
-This is the opposite of [fog](http://fog.io). AWSRaw tries to add as little
-abstraction as possible on top of the AWS REST API.
+You use a regular HTTP library
+([Faraday](https://github.com/lostisland/faraday)) to make requests, and AWSRaw
+provides useful additions like request signing.
 
-You use a regular HTTP library to make requests, and AWSRaw provides useful
-additions like request signing.
 
 ## Status
 
@@ -21,6 +22,12 @@ Note that master is currently a pre-release of 1.0, and has a different API to
 the 0.1 release.  If you need the old code, see the
 [0.1-maintenance](https://github.com/envato/awsraw/tree/0.1-maintenance)
 branch.
+
+1.0 has solid tests, but has only had light use so far, and feedback is
+definitely welcome.
+
+So far we've only built S3 support. We'd love to see pull requests for other
+AWS services.
 
 
 ## Examples
@@ -122,19 +129,6 @@ http_post_variables = {
 
 Then get your browser to do an XHR request using the http_post_variables, and
 Bob's your aunty.
-
-
-## Status
-
-This is still a bit experimental, and is missing some key features, but what's
-there is solid and well tested.
-
-Right now AWSRaw only has direct support for
-[Faraday](https://github.com/lostisland/faraday), but you could still use it
-with other client libraries with a bit of work.
-
-So far we've only built S3 support. We'd love to see pull requests for other
-AWS services.
 
 
 ## Contributing
