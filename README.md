@@ -15,6 +15,13 @@ abstraction as possible on top of the AWS REST API.
 You use a regular HTTP library to make requests, and AWSRaw provides useful
 additions like request signing.
 
+## Status
+
+Note that master is currently a pre-release of 1.0, and has a different API to
+the 0.1 release.  If you need the old code, see the
+[0.1-maintenance](https://github.com/envato/awsraw/tree/0.1-maintenance)
+branch.
+
 
 ## Examples
 
