@@ -18,6 +18,8 @@ provides useful additions like request signing.
 
 ## Status
 
+Build status: [![Build Status](https://travis-ci.org/envato/awsraw.png)](https://travis-ci.org/envato/awsraw)
+
 This is a pre-release of 1.0, so to install it as a gem you'll need to use `gem
 install --pre awsraw`, or declare it as `gem 'awsraw', '~>1.0.0.alpha'` in your
 `Gemfile`.
