@@ -18,8 +18,11 @@ provides useful additions like request signing.
 
 ## Status
 
-Note that master is currently a pre-release of 1.0, and has a different API to
-the 0.1 release.  If you need the old code, see the
+Note that master is currently a pre-release of 1.0, so to install it as a gem
+you'll need to use `gem install --pre awsraw`, or declare use `gem 'awsraw',
+'~>1.0.0.alpha'` in your `Gemfile`.
+
+1.0 has a different API to 0.1. If you need the old code, see the
 [0.1-maintenance](https://github.com/envato/awsraw/tree/0.1-maintenance)
 branch.
 
@@ -77,15 +80,15 @@ for all the requests you can make.
 
 #### On request bodies
 
-If your request has a body and you don't provide a Content-MD5 header for it,
-AWSRaw will try to calculate one. (The S3 API requires the Content-MD5 header
+If your request has a body and you don't provide a `Content-MD5` header for it,
+AWSRaw will try to calculate one. (The S3 API requires the `Content-MD5` header
 for correct request signing.)
 
-It can handle the body behaving as either a String or a File. If you want to do
-something different with the body, you'll need to set the Content-MD5 header
-yourself.
+It can handle the body behaving as either a `String` or a `File`. If you want
+to do something different with the body, you'll need to set the `Content-MD5`
+header yourself.
 
-You must also provide a Content-Type header for your request if there's a
+You must also provide a `Content-Type` header for your request if there's a
 request body. AWSRaw will raise an exception if you don't.
 
 
