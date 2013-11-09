@@ -18,19 +18,19 @@ provides useful additions like request signing.
 
 ## Status
 
-Note that master is currently a pre-release of 1.0, so to install it as a gem
-you'll need to use `gem install --pre awsraw`, or declare use `gem 'awsraw',
-'~>1.0.0.alpha'` in your `Gemfile`.
-
-1.0 has a different API to 0.1. If you need the old code, see the
-[0.1-maintenance](https://github.com/envato/awsraw/tree/0.1-maintenance)
-branch.
+This is a pre-release of 1.0, so to install it as a gem you'll need to use `gem
+install --pre awsraw`, or declare it as `gem 'awsraw', '~>1.0.0.alpha'` in your
+`Gemfile`.
 
 1.0 has solid tests, but has only had light use so far, and feedback is
 definitely welcome.
 
 So far we've only built S3 support. We'd love to see pull requests for other
 AWS services.
+
+The old, 0.1 version lives on the
+[0.1-maintenance](https://github.com/envato/awsraw/tree/0.1-maintenance)
+branch.
 
 
 ## Examples
