@@ -85,4 +85,13 @@ describe AWSRaw::S3::FaradayMiddleware do
     expect { subject.call(env) }.to raise_error(AWSRaw::Error, "Can't make a request with a body but no Content-Type header")
   end
 
+  it "does not set the MD5 header if no body is supplied" do
+    env = {
+      :method          => :get,
+      :url             => "http://s3.amazonaws.com/johnsmith/my-file.txt",
+      :request_headers => { }
+    }
+    subject.call(env)
+    expect(env[:request_headers].keys).to_not include("Content-MD5")
+  end
 end
