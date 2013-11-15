@@ -32,6 +32,8 @@ module AWSRaw
         )
 
         env[:request_headers]['Authorization'] = Signature.authorization_header(string_to_sign, @credentials)
+
+        @app.call(env)
       end
     end
   end
