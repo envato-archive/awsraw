@@ -46,6 +46,10 @@ describe AWSRaw::S3::CanonicalizedResource do
     it "sorts the subresources" do
       expect(subject.canonicalized_subresources("website&acl")).to eq("?acl&website")
     end
+
+    it "includes subresources with parameters" do
+      expect(subject.canonicalized_subresources("uploadId=foo")).to eq("?uploadId=foo")
+    end
   end
 
 end
