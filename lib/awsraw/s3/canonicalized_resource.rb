@@ -1,4 +1,5 @@
 require 'uri'
+require 'cgi'
 
 module AWSRaw
   module S3
@@ -39,9 +40,17 @@ module AWSRaw
       # that are overridden by parameters, nor does it handle the "delete"
       # parameter for multi-object Delete requests.
       def self.canonicalized_subresources(query)
-        query ||= ""
-        subresources = query.split("&") & VALID_SUBRESOURCES
-        "?#{subresources.sort.join('&')}" unless subresources.empty?
+        params = CGI.parse(query || "")
+        subresources = params.keys & VALID_SUBRESOURCES
+        return nil if subresources.empty?
+
+        '?' + subresources.sort.collect { |subresource|
+          if params[subresource].empty?
+            subresource
+          else
+            params[subresource].collect { |value| "#{subresource}=#{value}" }
+          end
+        }.flatten.join('&')
       end
 
     end

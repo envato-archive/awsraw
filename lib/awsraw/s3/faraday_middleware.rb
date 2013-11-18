@@ -20,7 +20,7 @@ module AWSRaw
         end
 
         env[:request_headers]['Date']        ||= Time.now.httpdate
-        env[:request_headers]['Content-MD5'] ||= ContentMD5Header.generate_content_md5(env[:body])
+        env[:request_headers]['Content-MD5'] ||= ContentMD5Header.generate_content_md5(env[:body]) if env[:body]
 
         string_to_sign = StringToSign.string_to_sign(
           :method       => env[:method].to_s.upcase,
@@ -32,8 +32,9 @@ module AWSRaw
         )
 
         env[:request_headers]['Authorization'] = Signature.authorization_header(string_to_sign, @credentials)
-      end
 
+        @app.call(env)
+      end
     end
   end
 end

@@ -10,8 +10,9 @@ describe AWSRaw::S3::FaradayMiddleware do
     )
   end
 
-  let(:app)  { double("app") }
-  let(:time) { Time.parse("2013-09-19 19:22:13 +1000") }
+  let(:app)      { double("app", :call => response) }
+  let(:time)     { Time.parse("2013-09-19 19:22:13 +1000") }
+  let(:response) { double "response" }
 
   subject { described_class.new(app, credentials) }
 
@@ -85,4 +86,25 @@ describe AWSRaw::S3::FaradayMiddleware do
     expect { subject.call(env) }.to raise_error(AWSRaw::Error, "Can't make a request with a body but no Content-Type header")
   end
 
+  it "does not set the MD5 header if no body is supplied" do
+    env = {
+      :method          => :get,
+      :url             => "http://s3.amazonaws.com/johnsmith/my-file.txt",
+      :request_headers => { }
+    }
+    subject.call(env)
+    expect(env[:request_headers].keys).to_not include("Content-MD5")
+  end
+
+  it "passes on the call to the app" do
+    env = {
+      :method          => :get,
+      :url             => "http://s3.amazonaws.com/johnsmith/my-file.txt",
+      :request_headers => { }
+    }
+
+    app.should_receive(:call).with(env)
+
+    subject.call(env)
+  end
 end
