@@ -19,9 +19,20 @@ module AWSRaw
           raise AWSRaw::Error, "Can't make a request with a body but no Content-Type header"
         end
 
+        add_missing_headers(env)
+        sign_request(env)
+
+        @app.call(env)
+      end
+
+    private
+
+      def add_missing_headers(env)
         env[:request_headers]['Date']        ||= Time.now.httpdate
         env[:request_headers]['Content-MD5'] ||= ContentMD5Header.generate_content_md5(env[:body]) if env[:body]
+      end
 
+      def sign_request(env)
         string_to_sign = StringToSign.string_to_sign(
           :method       => env[:method].to_s.upcase,
           :uri          => env[:url],
@@ -32,9 +43,8 @@ module AWSRaw
         )
 
         env[:request_headers]['Authorization'] = Signature.authorization_header(string_to_sign, @credentials)
-
-        @app.call(env)
       end
+
     end
   end
 end
