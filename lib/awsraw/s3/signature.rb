@@ -38,7 +38,7 @@ module AWSRaw
     private
 
       def self.hmac_sha1(data, credentials)
-        digest = OpenSSL::Digest::Digest.new("sha1")
+        digest = OpenSSL::Digest.new("sha1")
         OpenSSL::HMAC.digest(digest, credentials.secret_access_key, data)
       end
 
