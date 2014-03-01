@@ -11,6 +11,7 @@ describe AWSRaw::S3::Signature do
     )
   end
 
+
   context ".signature" do
     context "AWS example tests:" do
       # Examples are pulled from the AWS docs:
@@ -90,14 +91,21 @@ EOF
 
     let(:signature) { "0RavWzkygo6QX9caELEqKi9kDbU=" }
 
+    # Note: These credentials are (I think) from an old version of the AWS
+    # examples. The credentials currently in the docs don't produce the
+    # example signature. I suspect AWS haven't correctly updated their docs.
+    let(:credentials) do
+      OpenStruct.new(
+        :access_key_id     => "0PN5J17HBGZHT7JJ3X82",
+        :secret_access_key => "uV3F3YluFJax1cknvbcGwgjvx4QpvB+leU8dUj2o"
+      )
+    end
+
     it ".encode_form_policy correctly encodes a policy" do
       expect(subject.encode_form_policy(policy_json)).to eq(policy_base64)
     end
 
-    # Note: This test fails. I'm pretty sure the example in the AWS docs is
-    # wrong, but I'm leaving it failing until I can confirm that.
     it ".form_signature correctly signs a policy" do
-      pending "Figure out which is wrong: the AWS examples or the code"
       expect(subject.form_signature(policy_base64, credentials)).to eq(signature)
     end
 
