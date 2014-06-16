@@ -1,4 +1,5 @@
 #!/bin/sh
 
-bundle
+mkdir -p vendor/bundle
+bundle install --path vendor/bundle
 bundle exec rspec
