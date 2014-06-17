@@ -3,6 +3,8 @@
 A client for [Amazon Web Services](http://www.amazonaws.com/) inspired by
 [FlickRaw](http://hanklords.github.com/flickraw/).
 
+Just experimenting with Buildbox.
+
 
 ## Background
 
