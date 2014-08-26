@@ -37,7 +37,7 @@ describe AWSRaw::S3::FaradayMiddleware do
   end
 
   it "sets the Date header if there isn't one" do
-    Time.stub(:now => time) # Freeze time for the duration of the test.
+    allow(Time).to receive(:now).and_return(time) # Freeze time for the duration of the test.
 
     env = {
       :method          => :get,
@@ -103,7 +103,7 @@ describe AWSRaw::S3::FaradayMiddleware do
       :request_headers => { }
     }
 
-    app.should_receive(:call).with(env)
+    expect(app).to receive(:call).with(env)
 
     subject.call(env)
   end
