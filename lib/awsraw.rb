@@ -1,3 +1,4 @@
+require "awsraw/credentials"
 require "awsraw/error"
 require "awsraw/version"
 require "awsraw/s3/canonicalized_resource"
