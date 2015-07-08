@@ -28,7 +28,7 @@ module AWSRaw
       alias_method :signature, :authorization_header_value
 
       def encoded_signature(string_to_sign)
-        digest    = OpenSSL::Digest::Digest.new("sha1")
+        digest    = OpenSSL::Digest.new("sha1")
         sha       = OpenSSL::HMAC.digest(digest, @secret_access_key, string_to_sign)
         signature = Base64.encode64(sha).strip
       end
