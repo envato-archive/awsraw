@@ -1,4 +1,4 @@
-# awsraw
+# AWSRaw [![Build Status](https://travis-ci.org/envato/awsraw.svg?branch=0.1-maintenance)](https://travis-ci.org/envato/awsraw)
 
 A client for [Amazon Web Services](http://www.amazonaws.com/) in the style of
 [FlickRaw](http://hanklords.github.com/flickraw/)
